@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # class UserInfo(models.Model):
@@ -12,13 +13,7 @@ from django.db import models
 #     level = models.IntegerField(max_length=10)
 
 
-# class CartInfo(models.Model):
-#     user_idx = models.ForeignKey()
-#     content_idx = models.ForeignKey()
-#     create_dt = models.DateTimeField(auto_now_add=True)
-#
-#
 # class FollowInfo(models.Model):
-#     user_idx = models.ForeignKey()
-#     f_user_idx = models.ForeignKey()
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     f_user = models.ForeignKey(User, on_delete=models.CASCADE)
 #     create_dt = models.DateTimeField(auto_now_add=True)
