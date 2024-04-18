@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block contents %}
+<h1>Sparta Market</h1>
+<h2>Sparta Market에 오신 것을 진심으로 환영합니다.</h2>
+<form action="{% url 'accounts:sign_up' %}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">가입</button>
+</form>
+{% endblock contents %}
