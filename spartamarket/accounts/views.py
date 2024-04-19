@@ -7,10 +7,10 @@ from django.shortcuts import (
 from django.contrib.auth import (
     login as auth_login,
     logout as auth_logout,
+    get_user_model,
 )
 from django.contrib.auth.forms import (
     AuthenticationForm,
-    UserCreationForm,
     PasswordChangeForm,
 )
 from django.contrib.auth.models import User
@@ -18,7 +18,8 @@ from django.views.decorators.http import (
     require_http_methods,
     require_POST,
 )
-# from .forms import CustomUserChangeForm
+from .forms import CustomUserCreationForm
+from datetime import timedelta
 
 
 def index(request):
@@ -31,10 +32,10 @@ def log_in(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
-            next_url = request.GET.get("next") or "index"
+            next_url = request.GET.get("next") or "products:products"
             return redirect(next_url)
         else:
-            return redirect("accounts:login")
+            return redirect("accounts:log_in")
     else:
         return render(request, "accounts/log-in.html", context={"form": AuthenticationForm()})
 
@@ -48,18 +49,38 @@ def log_out(request):
 @require_http_methods(["GET", "POST"])
 def sign_up(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("index")
         else:
-            return redirect("accounts:signup")
+            return redirect("accounts:sign_up")
     else:
-        return render(request, "accounts/sign-up.html", context={"form": UserCreationForm()})
+        return render(request, "accounts/sign-up.html", context={"form": CustomUserCreationForm()})
 
 
-def user_profile(request, username):
-    return render(request, "accounts/user-profile.html")
+def user_profile(request, user_idx):
+    row = get_object_or_404(get_user_model(), id=user_idx)
+    context = {
+        "create_dt": (row.date_joined + timedelta(hours=9)).strftime("%Y년 %m월 %d일"),
+        "row": row,
+    }
+    return render(request, "accounts/user-profile.html", context=context)
+
+
+@require_POST
+def follow(request, user_idx):
+    if request.user.is_authenticated:
+        me = request.user
+        target = get_user_model().objects.get(pk=user_idx)
+        if me != target:
+            if target.followers.filter(id=me.id).exists():
+                target.followers.remove(me)
+            else:
+                target.followers.add(me)
+        return redirect('accounts:user_profile', target.id)
+    else:
+        return redirect('accounts:log_in')
 
 
 def user_profile_edit(request):

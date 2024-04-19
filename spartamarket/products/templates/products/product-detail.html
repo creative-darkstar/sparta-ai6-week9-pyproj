@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+
+{% block header %}
+<style>
+    #delete_btn {
+        margin:0;
+        display:inline;
+        height:20px;
+        float: right;
+    }
+</style>
+{% endblock header %}
+
+{% block contents %}
+<div class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+        {% if request.user.id == user_idx %}
+        <div>
+            <a class="btn btn-secondary btn-sm" href="{% url 'products:product_update' idx %}" role="button">수정</a>
+            <form id="delete_btn" action="{% url 'products:product_delete' idx %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <p></p>
+    <div class="content">
+        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+            <!-- 게시판에 글 목록들이 홀수와 짝수가 번갈아가며 색상이 변경됨. -->
+            <thead>
+            <tr>
+                <th colspan="2" style="background-color: #ffffff; text-align: center; font-size: 20px">
+                    {{ title }}
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2" style="background-color: #eeeeee; text-align: left;">
+                    작성자:
+                    <a href="{% url 'accounts:user_profile' user_idx %}"
+                       class="text-decoration-none">{{ user_username }}</a>
+                </th>
+            </tr>
+            <tr>
+                <td style="background-color: #eeeeee; text-align: left;">
+                    작성일시: {{ create_dt }} | 수정일시: {{ update_dt }}
+                </td>
+            </tr>
+            </thead>
+        </table>
+        {% if image %}
+        <p class="ms-3"><img src="{{ image.url }}" alt=""></p>
+        {% endif %}
+        <p class="ms-3">{{ content }}</p>
+    </div>
+    <hr>
+</div>
+<div class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a class="btn btn-primary" href="{% url 'products:product_write' %}" role="button">상품 등록</a>
+    </div>
+</div>
+{% endblock contents %}

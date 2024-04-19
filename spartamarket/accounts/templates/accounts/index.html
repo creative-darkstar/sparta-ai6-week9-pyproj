@@ -1,6 +1,25 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block contents %}
-<h1>Sparta Market</h1>
-<h2>Index</h2>
+<div class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-center">
+        <div style="text-align: center">
+            <h1>Sparta Market</h1>
+            <br>
+            <img style="width: 500px; height: 500px;" src="{% static 'image/spartamarket_icon.png' %}" alt="">
+            <h3>Sparta Market에 오신 것을 환영합니다.</h3>
+            <br>
+            {% if request.user.is_authenticated %}
+            <p><a href="{% url 'products:products' %}">상품 목록으로 이동</a></p>
+            {% else %}
+            <p>
+                <a href="{% url 'accounts:sign_up' %}">시작하기</a>
+                 또는
+                <a href="{% url 'accounts:log_in' %}">로그인</a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock contents %}
