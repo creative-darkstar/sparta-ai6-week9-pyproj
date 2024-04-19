@@ -67,8 +67,22 @@ def user_profile(request, user_idx):
         "user_row": user_row,
     }
     if user_idx == request.user.id:
-        add_context = {"products_rows": []}
+        add_context = {"carts_rows": []}
         for row in user_row.carts.order_by("-create_dt"):
+            temp = {
+                "idx": row.id,
+                "title": row.title,
+                "user_username": row.user.username,
+                "user_idx": row.user.id,
+                "carts": row.cart_users.count,
+                "hits": row.hits,
+                "create_dt": (row.create_dt + timedelta(hours=9)).strftime("%Y년 %m월 %d일 %I시 %M분 %S초 %p"),
+                "update_dt": (row.update_dt + timedelta(hours=9)).strftime("%Y년 %m월 %d일 %I시 %M분 %S초 %p"),
+            }
+            add_context["carts_rows"].append(temp)
+        context.update(add_context)
+        add_context = {"products_rows": []}
+        for row in ProductInfo.objects.filter(user_id=user_idx, is_visible=True).order_by("-create_dt"):
             temp = {
                 "idx": row.id,
                 "title": row.title,
