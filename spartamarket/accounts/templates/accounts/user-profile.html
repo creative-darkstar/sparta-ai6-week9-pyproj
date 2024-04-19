@@ -2,28 +2,61 @@
 {% load static %}
 
 {% block contents %}
-    <h1>{{ row.username }}의 프로필</h1>
+    <h1>{{ user_row.username }} 님의 프로필</h1>
     <hr>
     <div>
-        {% if request.user.src %}
-        <img style="width: 100px; height: 100px;" src="{{ request.user.src }}" alt="">
+        {% if user_row.src %}
+        <img style="width: 100px; height: 100px;" src="{{ user_row.src }}" alt="">
         {% else %}
         <img style="width: 100px; height: 100px;" src="{% static 'image/user_default.png' %}" alt="">
         {% endif %}
-        <h3>username : {{ row.username }}</h3>
-        <p>팔로워 : {{ row.followers.count }} 명 | 팔로잉 : {{ row.followings.count }} 명</p>
+        <p>팔로워 : {{ user_row.followers.count }} 명 | 팔로잉 : {{ user_row.followings.count }} 명</p>
     </div>
 
-    {% if row.id == request.user.id %}
-
+    {% if user_row.id == request.user.id %}
+    <div class="container">
+        <div class="d-grid gap-2 d-md-flex justify-content-center">
+            <h3>장바구니 목록</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">번호</th>
+                    <th scope="col">상품 이름</th>
+                    <th scope="col">판매자</th>
+                    <th scope="col">판매 시작일시</th>
+                    <th scope="col">♥</th>
+                    <th scope="col">조회수</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in products_rows %}
+                <tr>
+                    <th scope="row">{{ row.idx }}</th>
+                    <td>
+                        <a href="{% url 'products:product_detail' row.idx %}"
+                           class="text-decoration-none">{{ row.title }}</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'accounts:user_profile' row.user_idx %}"
+                           class="text-decoration-none">{{ row.user_username }}</a>
+                    </td>
+                    <td>{{ row.create_dt }}</td>
+                    <td>{{ row.carts }}</td>
+                    <td>{{ row.hits }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <div>
-        <form action="{% url 'accounts:follow' row.id %}" method="POST">
+        <form action="{% url 'accounts:follow' user_row.id %}" method="POST">
             {% csrf_token %}
-            {% if user in row.followers.all %}
-            <button type="submit">언팔로우</button>
+            {% if user in user_row.followers.all %}
+            <button class="btn btn-secondary" type="submit">언팔로우</button>
             {% else %}
-            <button type="submit">팔로우</button>
+            <button class="btn btn-primary" type="submit">팔로우</button>
             {% endif %}
         </form>
     </div>
