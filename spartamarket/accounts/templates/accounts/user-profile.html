@@ -6,9 +6,9 @@
     <hr>
     <div>
         {% if user_row.src %}
-        <img style="width: 100px; height: 100px;" src="{{ user_row.src }}" alt="">
+        <img style="width: 200px; height: 200px;" src="{{ user_row.src.url }}" alt="">
         {% else %}
-        <img style="width: 100px; height: 100px;" src="{% static 'image/user_default.png' %}" alt="">
+        <img style="width: 200px; height: 200px;" src="{% static 'image/user_default.png' %}" alt="">
         {% endif %}
         <p>팔로워 : {{ user_row.followers.count }} 명 | 팔로잉 : {{ user_row.followings.count }} 명</p>
     </div>

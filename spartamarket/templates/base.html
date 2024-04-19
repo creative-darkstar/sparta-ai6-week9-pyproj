@@ -35,7 +35,7 @@
                     {% if request.user.is_authenticated %}
                     <span>환영합니다. {{ request.user.username }} 님</span>
                     {% if request.user.src %}
-                    <img style="width: 20px; height: 20px;" src="{{ request.user.src }}" alt="">
+                    <img style="width: 20px; height: 20px;" src="{{ request.user.src.url }}" alt="">
                     {% else %}
                     <img style="width: 20px; height: 20px;" src="{% static 'image/user_default.png' %}" alt="">
                     {% endif %}
