@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block contents %}
+<div class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-center">
+        <h1>상품 목록</h1>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">글제목</th>
+                <th scope="col">작성자</th>
+                <th scope="col">작성일시</th>
+                <th scope="col">♥</th>
+                <th scope="col">조회수</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <th scope="row">{{ row.idx }}</th>
+                <td>
+                    <a href="{% url 'products:product_detail' row.idx %}"
+                       class="text-decoration-none">{{ row.title }}</a>
+                </td>
+                <td>
+                    <a href="{% url 'accounts:user_profile' row.user_idx %}"
+                       class="text-decoration-none">{{ row.user_username }}</a>
+                </td>
+                <td>{{ row.create_dt }}</td>
+                <td>{{ row.carts }}</td>
+                <td>{{ row.hits }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a class="btn btn-primary" href="{% url 'products:product_write' %}" role="button">상품 등록</a>
+    </div>
+</div>
+{% endblock contents %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block contents %}
+    <h1>{{ row.username }}의 프로필</h1>
+    <hr>
+    <div>
+        {% if request.user.src %}
+        <img style="width: 100px; height: 100px;" src="{{ request.user.src }}" alt="">
+        {% else %}
+        <img style="width: 100px; height: 100px;" src="{% static 'image/user_default.png' %}" alt="">
+        {% endif %}
+        <h3>username : {{ row.username }}</h3>
+        <p>팔로워 : {{ row.followers.count }} 명 | 팔로잉 : {{ row.followings.count }} 명</p>
+    </div>
+
+    {% if row.id == request.user.id %}
+
+    {% else %}
+    <div>
+        <form action="{% url 'accounts:follow' row.id %}" method="POST">
+            {% csrf_token %}
+            {% if user in row.followers.all %}
+            <button type="submit">언팔로우</button>
+            {% else %}
+            <button type="submit">팔로우</button>
+            {% endif %}
+        </form>
+    </div>
+    {% endif %}
+{% endblock contents %}
