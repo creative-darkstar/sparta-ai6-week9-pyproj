@@ -4,7 +4,9 @@ from django.shortcuts import (
     render,
     redirect,
 )
-from django.contrib.auth.models import User
+from django.contrib.auth import (
+    get_user_model,
+)
 from django.views.decorators.http import (
     require_http_methods,
     require_POST,
@@ -37,12 +39,16 @@ def products(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def product_detail(request, product_idx):
+    me = get_user_model().objects.get(id=request.user.id)
     row = get_object_or_404(ProductInfo, id=product_idx)
+    is_carted = True if me.carts.filter(id=product_idx).exists() else False
     context = {
         "idx": product_idx,
         "title": row.title,
         "user_username": row.user.username,
         "user_idx": row.user.id,
+        "carts": row.cart_users.count,
+        "is_carted": is_carted,
         "hits": row.hits,
         "content": row.content,
         "image": row.image,
@@ -99,3 +105,17 @@ def product_delete(request, product_idx):
         delete_row.is_visible = False
         delete_row.save()
         return redirect("products:products")
+
+
+@require_POST
+def cart(request, product_idx):
+    if request.user.is_authenticated:
+        me = get_user_model().objects.get(id=request.user.id)
+        target = get_object_or_404(ProductInfo, id=product_idx)
+        if me.carts.filter(id=product_idx).exists():
+            me.carts.remove(target)
+        else:
+            me.carts.add(target)
+        return redirect("products:product_detail", product_idx)
+    else:
+        return redirect('accounts:log_in')
