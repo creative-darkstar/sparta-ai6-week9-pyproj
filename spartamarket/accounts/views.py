@@ -72,7 +72,7 @@ def user_profile(request, user_idx):
 def follow(request, user_idx):
     if request.user.is_authenticated:
         me = request.user
-        target = get_user_model().objects.get(pk=user_idx)
+        target = get_user_model().objects.get(id=user_idx)
         if me != target:
             if target.followers.filter(id=me.id).exists():
                 target.followers.remove(me)
